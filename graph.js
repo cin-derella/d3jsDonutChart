@@ -70,6 +70,7 @@ const update = (data)=>{
         graph.selectAll('path')
             .on('mouseover',handleMouseOver)    
             .on('mouseout',handleMouseOut)    
+            .on('click',handleClick)
 };
 
 
@@ -124,21 +125,25 @@ function arcTweenUpdate(d){
         return arcPath(i(t));
     }
 
-}
+};
 
-//event handlers
 
 //event handlers
 const handleMouseOver = (d,i,n)=>{
     //console.log(n[i]);
     d3.select(n[i])
-        .transition().duration(300)
+        .transition('changeSliceFill').duration(300)
             .attr('fill','#fff')
 }
+
 const handleMouseOut = (d,i,n)=>{
     //console.log(n[i]);
     d3.select(n[i])
-        .transition().duration(300)
+        .transition('changeSliceFill').duration(300)
             .attr('fill',color(d.data.name))
 }
 
+const handleClick = (d)=>{
+    const id = d.data.id;
+    db.collection('consumption').doc(id).delete();
+}
