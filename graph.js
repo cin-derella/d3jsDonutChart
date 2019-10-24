@@ -32,7 +32,10 @@ const update = (data)=>{
         console.log(pie(data));
 
     //handle the exit selection
-    paths.exit().remove();
+    paths.exit()
+        .transition().duration(750)
+        .attrTween('d',arcTweenExit)
+        .remove();
     
     //handle the current DOM path updates
     paths.attr('d',arcPath);
@@ -41,10 +44,12 @@ const update = (data)=>{
     paths.enter()
         .append('path')
             .attr('class','arc')
-            .attr('d',arcPath)
+            //.attr('d',arcPath)
             .attr('stroke','#fff')
             .attr('stroke-width',3)
-            .attr('fill',d=>color(d.data.name));
+            .attr('fill',d=>color(d.data.name))
+            .transition().duration(750)
+                .attrTween("d",arcTweenEnter);
 };
 
 
@@ -70,4 +75,20 @@ db.collection('consumption').onSnapshot(res =>{
         }
     });
     update(data);
-})
+});
+
+const arcTweenEnter = (d)=>{
+    var i = d3.interpolate(d.endAngle,d.startAngle);
+    return function(t){
+        d.startAngle = i(t);
+        return arcPath(d);
+    }
+};
+
+const arcTweenExit = (d)=>{
+    var i = d3.interpolate(d.startAngle,d.endAngle);
+    return function(t){
+        d.startAngle = i(t);
+        return arcPath(d);
+    }
+};
