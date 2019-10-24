@@ -28,6 +28,18 @@ const legend = d3.legendColor()
     .shapePadding(10)
     .scale(color);
 
+const tip = d3.tip()    
+    .attr('class','tip card')
+    .html(d=>{
+        let content =`<div class = "name">${d.data.name}</div>`;
+        content += `<div class = "hour">${d.data.hour}</div>`;
+        content +=`<div class = "delete">Click slice to delete</div>`;
+        return content;
+    });
+
+    
+graph.call(tip);
+
 //update function
 const update = (data)=>{
 
@@ -68,8 +80,13 @@ const update = (data)=>{
 
         //add event
         graph.selectAll('path')
-            .on('mouseover',handleMouseOver)    
-            .on('mouseout',handleMouseOut)    
+            .on('mouseover',(d,i,n)=>{
+                tip.show(d,n[i]);
+                handleMouseOver(d,i,n);
+            })   
+            .on('mouseout',(d,i,n)=>{
+                tip.hide(d,n[i]);
+                handleMouseOut(d,i,n)})   
             .on('click',handleClick)
 };
 
