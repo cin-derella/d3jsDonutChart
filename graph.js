@@ -3,7 +3,7 @@ const cent = {x:(dims.width/2+5),y:(dims.height/2+5)};
 
 const svg = d3.select('.canvas')
     .append('svg')
-    .attr('width',dims.width + 150)
+    .attr('width',dims.width + 200)
     .attr('height',dims.height + 150 );
 
 const graph = svg.append('g')
@@ -19,12 +19,24 @@ const arcPath = d3.arc()
 
 const color = d3.scaleOrdinal(d3['schemeSet3'])
 
+//legend set
+const legendGroup = svg.append('g')
+    .attr('transform',`translate(${dims.width+40},15)`);
+
+const legend = d3.legendColor()
+    .shape('circle')
+    .shapePadding(10)
+    .scale(color);
+
 //update function
 const update = (data)=>{
+
     console.log(data)
     //update color scale domain
     color.domain(data.map(d=>d.name));
-
+    //update and call legend
+    legendGroup.call(legend);
+    legendGroup.selectAll('text').attr('fill','white');
 
     //join enhanced pie data to path elements
     const paths = graph.selectAll('path')
